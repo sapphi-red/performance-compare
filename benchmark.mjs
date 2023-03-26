@@ -67,6 +67,8 @@ const browser = await playwright.chromium.launch();
 for (const buildTool of buildTools) {
   const page = await browser.newPage();
 
+  await new Promise((resolve) => setTimeout(resolve, 1000)); // give some rest
+
   const serverStartTime = await buildTool.startServer();
 
   const loadPromise = page.waitForEvent('load');
