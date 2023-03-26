@@ -42,10 +42,9 @@ If you want to start the project with the specified tool, try:
 ```bash
 pnpm i # install dependencies
 
-npm run start # Start Farm
+npm run start:farm # Start Farm
 npm run start:vite # Start Vite
 npm run start:webpack # Start Webpack
 npm run start:rspack # Start Rspack
 npm run start:turbopack # Start Turbopack
 ```
-
