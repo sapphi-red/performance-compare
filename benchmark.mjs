@@ -58,6 +58,7 @@ const buildTools = [
   new BuildTool("Webpack (babel)", 8081, "start:webpack", /compiled successfully in (.+) ms/),
   new BuildTool("Webpack (swc)", 8082, "start:webpack-swc", /compiled successfully in (.+) ms/),
   new BuildTool("Vite", 5173, "start:vite", /ready in (.+) ms/),
+  new BuildTool("Vite (swc)", 5174, "start:vite-swc", /ready in (.+) ms/),
   new BuildTool("Farm", 9000, "start:farm", /Ready on (?:.+) in (.+)ms/),
 ]
 
