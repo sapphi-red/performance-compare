@@ -64,17 +64,24 @@ const buildTools = [
   new BuildTool("Parcel", 1234, "start:parcel", /Server running/),
 ]
 
-await Promise.all([
-  // Turbopack
-  rm('./.next', { force: true, recursive: true }),
-  // Vite
-  rm('./node_modules/.vite', { force: true, recursive: true }),
-  // Vite (swc)
-  rm('./node_modules/.vite-swc', { force: true, recursive: true }),
-  // Parcel
-  rm('./.parcel-cache', { force: true, recursive: true }),
-  rm('./dist-parcel', { force: true, recursive: true })
-])
+const hotRun = process.argv.includes('--hot')
+const note = hotRun ? '(NOTE: you should run cold run before hot run to populate the cache)' : ''
+console.log(`Running ${hotRun ? 'hot' : 'cold'} run${note}`)
+console.log()
+
+if (!hotRun) {
+  await Promise.all([
+    // Turbopack
+    rm('./.next', { force: true, recursive: true }),
+    // Vite
+    rm('./node_modules/.vite', { force: true, recursive: true }),
+    // Vite (swc)
+    rm('./node_modules/.vite-swc', { force: true, recursive: true }),
+    // Parcel
+    rm('./.parcel-cache', { force: true, recursive: true }),
+    rm('./dist-parcel', { force: true, recursive: true })
+  ])
+}
 
 const browser = await playwright.chromium.launch();
 
