@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import { appendFileSync, readFileSync, writeFileSync } from "fs";
+import { rm } from "fs/promises";
 import path from "path";
 import playwright from "playwright";
 
@@ -62,6 +63,18 @@ const buildTools = [
   new BuildTool("Farm", 9000, "start:farm", /Ready on (?:.+) in (.+)ms/),
   new BuildTool("Parcel", 1234, "start:parcel", /Server running/),
 ]
+
+await Promise.all([
+  // Turbopack
+  rm('./.next', { force: true, recursive: true }),
+  // Vite
+  rm('./node_modules/.vite', { force: true, recursive: true }),
+  // Vite (swc)
+  rm('./node_modules/.vite-swc', { force: true, recursive: true }),
+  // Parcel
+  rm('./.parcel-cache', { force: true, recursive: true }),
+  rm('./dist-parcel', { force: true, recursive: true })
+])
 
 const browser = await playwright.chromium.launch();
 

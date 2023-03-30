@@ -39,8 +39,8 @@
   "scripts": {
     "benchmark": "node benchmark.mjs",
     "start:farm": "farm start",
-    "start:vite": "vite --force",
-    "start:vite-swc": "vite -c vite.swc.config.ts --force",
+    "start:vite": "vite",
+    "start:vite-swc": "vite -c vite.swc.config.ts",
     "start:webpack": "webpack serve --mode development",
     "start:webpack-swc": "webpack serve --config ./webpack.swc.config.js --mode development",
     "start:rspack": "rspack serve",
