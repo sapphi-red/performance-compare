@@ -27,6 +27,7 @@
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
     "next": "^13.2.4",
+    "parcel": "^2.8.3",
     "react-refresh": "^0.14.0",
     "style-loader": "^3.3.2",
     "swc-loader": "^0.2.3",
@@ -43,9 +44,13 @@
     "start:webpack": "webpack serve --mode development",
     "start:webpack-swc": "webpack serve --config ./webpack.swc.config.js --mode development",
     "start:rspack": "rspack serve",
-    "start:turbopack": "next dev --turbo"
+    "start:turbopack": "next dev --turbo",
+    "start:parcel": "parcel index.html --dist-dir dist-parcel"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"
-  ]
+  ],
+  "alias": {
+    "process": false
+  }
 }

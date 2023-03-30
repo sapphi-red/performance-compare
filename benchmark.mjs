@@ -25,8 +25,8 @@ class BuildTool {
 
       child.stdout.on('data', (data) => {
         const match = this.startedRegex.exec(data);
-        if (match && match[1]) {
-          resolve(Number(match[1]));
+        if (match) {
+          resolve(match[1] ? Number(match[1]) : null);
         }
       });
       child.on('error', (error) => {
@@ -60,6 +60,7 @@ const buildTools = [
   new BuildTool("Vite", 5173, "start:vite", /ready in (.+) ms/),
   new BuildTool("Vite (swc)", 5174, "start:vite-swc", /ready in (.+) ms/),
   new BuildTool("Farm", 9000, "start:farm", /Ready on (?:.+) in (.+)ms/),
+  new BuildTool("Parcel", 1234, "start:parcel", /Server running/),
 ]
 
 const browser = await playwright.chromium.launch();
@@ -69,13 +70,17 @@ for (const buildTool of buildTools) {
 
   await new Promise((resolve) => setTimeout(resolve, 1000)); // give some rest
 
-  const serverStartTime = await buildTool.startServer();
-
   const loadPromise = page.waitForEvent('load');
   const pageLoadStart = Date.now();
+  const serverStartTime = await buildTool.startServer();
   page.goto(`http://localhost:${buildTool.port}`);
   await loadPromise;
-  console.log(buildTool.name, ` startup time: ${(Date.now() - pageLoadStart) + serverStartTime}ms (including server start up time: ${serverStartTime}ms)`);
+
+  if (serverStartTime !== null) {
+    console.log(buildTool.name, ` startup time: ${(Date.now() - pageLoadStart)}ms (including server start up time: ${serverStartTime}ms)`);
+  } else {
+    console.log(buildTool.name, ` startup time: ${(Date.now() - pageLoadStart)}ms (including server start up time)`);
+  }
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
