@@ -7,6 +7,7 @@ export default defineConfig({
   ],
   server: {
     port: 5174,
+    strictPort: true,
   },
   cacheDir: 'node_modules/.vite-swc'
 });

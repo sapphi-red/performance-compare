@@ -1,8 +1,7 @@
-import { spawn } from "child_process";
 import { appendFileSync, readFileSync, writeFileSync } from "fs";
-import { rm } from "fs/promises";
 import path from "path";
 import playwright from "playwright";
+import { buildTools } from "./benchmark/buildTools.mjs"
 
 const rootFilePath = path.resolve('src', 'comps', 'triangle.jsx');
 const leafFilePath = path.resolve('src', 'comps', 'triangle_1_1_2_1_2_2_1.jsx');
@@ -10,123 +9,103 @@ const leafFilePath = path.resolve('src', 'comps', 'triangle_1_1_2_1_2_2_1.jsx');
 const originalRootFileContent = readFileSync(rootFilePath, 'utf-8');
 const originalLeafFileContent = readFileSync(leafFilePath, 'utf-8');
 
-class BuildTool {
-  constructor(name, port, script, startedRegex) {
-    this.name = name;
-    this.port = port;
-    this.script = script;
-    this.startedRegex = startedRegex;
+const countArg = process.argv.find(arg => arg.startsWith('-n='))
+let count = 3
+if (countArg) {
+  const countArgValue = +countArg.slice('-n='.length)
+  if (countArgValue === NaN) {
+    throw new Error('countArgValue is NaN')
   }
-
-  async startServer() {
-    return new Promise((resolve, reject) => {
-
-      const child = spawn(`npm`, ["run", this.script], { stdio: 'pipe', shell: true, env: { ...process.env, NO_COLOR: '1' } });
-      this.child = child;
-
-      child.stdout.on('data', (data) => {
-        const match = this.startedRegex.exec(data);
-        if (match) {
-          resolve(match[1] ? Number(match[1]) : null);
-        }
-      });
-      child.on('error', (error) => {
-        console.log(`${this.name} error: ${error.message}`);
-        reject(error);
-      });
-      child.on('exit', (code) => {
-        if (code !== null && code !== 0) {
-          console.log(`${this.name} exit: ${code}`);
-          reject(code);
-        }
-      });
-    });
+  if (countArgValue < 1) {
+    throw new Error('countArgValue < 1')
   }
-
-  stop() {
-    if (this.child) {
-      this.child.stdin.pause();
-      this.child.stdout.destroy();
-      this.child.stderr.destroy();
-      this.child.kill();
-    }
-  }
+  count = countArgValue
 }
-
-const buildTools = [
-  new BuildTool("Rspack", 8080, "start:rspack", /build success, time cost (.+) ms/),
-  new BuildTool("Turbopack", 3000, "start:turbopack", /initial compilation (.+)ms/),
-  new BuildTool("Webpack (babel)", 8081, "start:webpack", /compiled successfully in (.+) ms/),
-  new BuildTool("Webpack (swc)", 8082, "start:webpack-swc", /compiled successfully in (.+) ms/),
-  new BuildTool("Vite", 5173, "start:vite", /ready in (.+) ms/),
-  new BuildTool("Vite (swc)", 5174, "start:vite-swc", /ready in (.+) ms/),
-  new BuildTool("Farm", 9000, "start:farm", /Ready on (?:.+) in (.+)ms/),
-  new BuildTool("Parcel", 1234, "start:parcel", /Server running/),
-]
 
 const hotRun = process.argv.includes('--hot')
-const note = hotRun ? '(NOTE: you should run cold run before hot run to populate the cache)' : ''
-console.log(`Running ${hotRun ? 'hot' : 'cold'} run${note}`)
+console.log(`Running ${hotRun ? 'hot' : 'cold'} run ${count} times`)
 console.log()
 
-if (!hotRun) {
-  await Promise.all([
-    // Turbopack
-    rm('./.next', { force: true, recursive: true }),
-    // Vite
-    rm('./node_modules/.vite', { force: true, recursive: true }),
-    // Vite (swc)
-    rm('./node_modules/.vite-swc', { force: true, recursive: true }),
-    // Parcel
-    rm('./.parcel-cache', { force: true, recursive: true }),
-    rm('./dist-parcel', { force: true, recursive: true })
-  ])
-}
-
 const browser = await playwright.chromium.launch();
+const results = []
 
 for (const buildTool of buildTools) {
-  const page = await browser.newPage();
+  const totalResult = {}
 
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // give some rest
-
-  const loadPromise = page.waitForEvent('load');
-  const pageLoadStart = Date.now();
-  const serverStartTime = await buildTool.startServer();
-  page.goto(`http://localhost:${buildTool.port}`);
-  await loadPromise;
-
-  if (serverStartTime !== null) {
-    console.log(buildTool.name, ` startup time: ${(Date.now() - pageLoadStart)}ms (including server start up time: ${serverStartTime}ms)`);
-  } else {
-    console.log(buildTool.name, ` startup time: ${(Date.now() - pageLoadStart)}ms (including server start up time)`);
+  if (hotRun) {
+    console.log(`Populate cache: ${buildTool.name}`);
+    const page = await (await browser.newContext()).newPage();
+    await buildTool.startServer();
+    await page.goto(`http://localhost:${buildTool.port}`, { waitUntil: 'load' });
+    buildTool.stop();
+    await page.close();
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  for (let i = 0; i < count; i++) {
+    console.log(`Running: ${buildTool.name} (${i+1})`);
 
-  const rootConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('root hmr') });
-  appendFileSync(rootFilePath, `
-    console.log('root hmr');
-  `)
-  const hmrRootStart = Date.now();
-  await rootConsolePromise;
-  console.log(buildTool.name, ` Root HMR time: ${Date.now() - hmrRootStart}ms`);
+    if (!hotRun) {
+      await buildTool.clean?.()
+    }
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    const page = await (await browser.newContext()).newPage();
+    await new Promise((resolve) => setTimeout(resolve, 300)); // give some rest
 
-  const leafConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
-  appendFileSync(leafFilePath, `
-    console.log('leaf hmr');
-  `)
-  const hmrLeafStart = Date.now();
-  await leafConsolePromise;
-  console.log(buildTool.name, ` Leaf HMR time: ${Date.now() - hmrLeafStart}ms`);
+    const loadPromise = page.waitForEvent('load');
+    const pageLoadStart = Date.now();
+    const serverStartTime = await buildTool.startServer();
+    page.goto(`http://localhost:${buildTool.port}`);
+    await loadPromise;
+    totalResult.startup ??= 0;
+    totalResult.startup += (Date.now() - pageLoadStart);
+    if (serverStartTime !== null) {
+      totalResult.serverStart ??= 0;
+      totalResult.serverStart += serverStartTime;
+    }
 
-  buildTool.stop();
-  await page.close();
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-  writeFileSync(rootFilePath, originalRootFileContent);
-  writeFileSync(leafFilePath, originalLeafFileContent);
+    const rootConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('root hmr') });
+    appendFileSync(rootFilePath, `
+      console.log('root hmr');
+    `)
+    const hmrRootStart = Date.now();
+    await rootConsolePromise;
+    totalResult.rootHmr ??= 0;
+    totalResult.rootHmr += (Date.now() - hmrRootStart);
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const leafConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
+    appendFileSync(leafFilePath, `
+      console.log('leaf hmr');
+    `)
+    const hmrLeafStart = Date.now();
+    await leafConsolePromise;
+    totalResult.leafHmr ??= 0;
+    totalResult.leafHmr += (Date.now() - hmrLeafStart);
+
+    buildTool.stop();
+    await page.close();
+
+    writeFileSync(rootFilePath, originalRootFileContent);
+    writeFileSync(leafFilePath, originalLeafFileContent);
+  }
+
+  const result = Object.fromEntries(Object.entries(totalResult).map(([k, v]) => [k, v ? v / count : v]))
+  results.push({ name: buildTool.name, result })
 }
 
 await browser.close();
+
+console.log('-----')
+console.log('Results')
+
+const out = results.map(({ name, result }) => ({
+  name,
+  'startup time': result.serverStart ? `${result.startup.toFixed(1)}ms (including server start up time: ${result.serverStart.toFixed(1)}ms)` : `${result.startup.toFixed(1)}ms`,
+  'Root HMR time': `${result.rootHmr.toFixed(1)}ms`,
+  'Leaf HMR time': `${result.leafHmr.toFixed(1)}ms`
+}))
+
+console.table(out)
