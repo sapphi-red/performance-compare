@@ -1,7 +1,8 @@
 import { appendFileSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
-import playwright from "playwright";
+import puppeteer from "puppeteer";
 import { buildTools } from "./benchmark/buildTools.mjs"
+import { waitForEvent } from "./benchmark/waitFor.mjs";
 
 const rootFilePath = path.resolve('src', 'comps', 'triangle.jsx');
 const leafFilePath = path.resolve('src', 'comps', 'triangle_1_1_2_1_2_2_1.jsx');
@@ -26,7 +27,7 @@ const hotRun = process.argv.includes('--hot')
 console.log(`Running ${hotRun ? 'hot' : 'cold'} run ${count} times`)
 console.log()
 
-const browser = await playwright.chromium.launch();
+const browser = await puppeteer.launch();
 const results = []
 
 for (const buildTool of buildTools) {
@@ -34,7 +35,7 @@ for (const buildTool of buildTools) {
 
   if (hotRun) {
     console.log(`Populate cache: ${buildTool.name}`);
-    const page = await (await browser.newContext()).newPage();
+    const page = await browser.newPage();
     await buildTool.startServer();
     await page.goto(`http://localhost:${buildTool.port}`, { waitUntil: 'load' });
     buildTool.stop();
@@ -48,10 +49,10 @@ for (const buildTool of buildTools) {
       await buildTool.clean?.()
     }
 
-    const page = await (await browser.newContext()).newPage();
+    const page = await browser.newPage();
     await new Promise((resolve) => setTimeout(resolve, 300)); // give some rest
 
-    const loadPromise = page.waitForEvent('load');
+    const loadPromise = waitForEvent(page, 'load');
     const pageLoadStart = Date.now();
     const serverStartTime = await buildTool.startServer();
     page.goto(`http://localhost:${buildTool.port}`);
@@ -65,7 +66,7 @@ for (const buildTool of buildTools) {
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const rootConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('root hmr') });
+    const rootConsolePromise = waitForEvent(page, 'console', { predicate: e => e.text().includes('root hmr') });
     appendFileSync(rootFilePath, `
       console.log('root hmr');
     `)
@@ -76,7 +77,7 @@ for (const buildTool of buildTools) {
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    const leafConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
+    const leafConsolePromise = waitForEvent(page, 'console', { predicate: e => e.text().includes('leaf hmr') });
     appendFileSync(leafFilePath, `
       console.log('leaf hmr');
     `)

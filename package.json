@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "dependencies": {
     "clsx": "^1.2.1",
-    "playwright": "^1.32.3",
+    "puppeteer": "^19.9.1",
     "react": "18",
     "react-dom": "18",
     "tree-kill": "^1.2.2"
