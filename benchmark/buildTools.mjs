@@ -53,7 +53,7 @@ export const buildTools = [
     "Rspack",
     8080,
     "start:rspack",
-    /build success, time cost (.+) ms/,
+    /Time: (.+)ms/,
   ),
   new BuildTool(
     "Turbopack",

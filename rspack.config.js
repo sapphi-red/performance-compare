@@ -7,6 +7,8 @@ module.exports = {
 		main: "./src/index.tsx"
 	},
 	builtins: {
+		noEmitAssets:true,
+		devFriendlySplitChunks:true,
 		html: [
 			{
 				template: "./index.webpack.html"
@@ -21,4 +23,12 @@ module.exports = {
 			}
 		]
 	},
+	watchOptions: {
+		poll:0,
+		aggregateTimeout:0
+	},
+	stats: {
+		timings:true,
+		all:false
+	}
 };
