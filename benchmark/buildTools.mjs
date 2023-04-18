@@ -59,7 +59,7 @@ export const buildTools = [
     "Turbopack",
     3000,
     "start:turbopack",
-    /initial compilation (.+)ms/,
+    /startup (.+)ms/,
     () => rm(path.join(_dirname, '../.next'), { force: true, recursive: true, maxRetries: 5 }),
   ),
   new BuildTool(
