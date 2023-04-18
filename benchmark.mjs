@@ -26,6 +26,8 @@ const hotRun = process.argv.includes('--hot')
 console.log(`Running ${hotRun ? 'hot' : 'cold'} run ${count} times`)
 console.log()
 
+const outputMd = process.argv.includes('--markdown')
+
 const browser = await playwright.chromium.launch();
 const results = []
 
@@ -101,11 +103,37 @@ await browser.close();
 console.log('-----')
 console.log('Results')
 
-const out = results.map(({ name, result }) => ({
-  name,
-  'startup time': result.serverStart ? `${result.startup.toFixed(1)}ms (including server start up time: ${result.serverStart.toFixed(1)}ms)` : `${result.startup.toFixed(1)}ms`,
-  'Root HMR time': `${result.rootHmr.toFixed(1)}ms`,
-  'Leaf HMR time': `${result.leafHmr.toFixed(1)}ms`
-}))
-
-console.table(out)
+if (outputMd) {
+  let out = '| name | startup | Root HMR | Leaf HMR |\n'
+  out += '| --- | ----: | ----: | ----: |\n'
+  out += results
+    .map(
+      ({ name, result }) =>
+        `| ${[
+          name,
+          `${result.startup}ms${
+            result.serverStart
+              ? ` (including server start up time: ${result.serverStart}ms)`
+              : ''
+          }`,
+          `${result.rootHmr}ms`,
+          `${result.leafHmr}ms`
+        ].join(' | ')} |`
+    )
+    .join('\n')
+  console.log(out)
+} else {
+  const out = results.map(({ name, result }) => [
+    name,
+    {
+      'startup time': `${result.startup}ms${
+        result.serverStart
+          ? ` (including server start up time: ${result.serverStart}ms)`
+          : ''
+      }`,
+      'Root HMR time': `${result.rootHmr}ms`,
+      'Leaf HMR time': `${result.leafHmr}ms`
+    }
+  ])
+  console.table(out)
+}
