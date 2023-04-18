@@ -94,7 +94,7 @@ for (const buildTool of buildTools) {
     writeFileSync(leafFilePath, originalLeafFileContent);
   }
 
-  const result = Object.fromEntries(Object.entries(totalResult).map(([k, v]) => [k, v ? v / count : v]))
+  const result = Object.fromEntries(Object.entries(totalResult).map(([k, v]) => [k, v ? (v / count).toFixed(1) : v]))
   results.push({ name: buildTool.name, result })
 }
 
