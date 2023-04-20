@@ -123,7 +123,7 @@ if (outputMd) {
     .join('\n')
   console.log(out)
 } else {
-  const out = results.map(({ name, result }) => [
+  const out = Object.fromEntries(results.map(({ name, result }) => [
     name,
     {
       'startup time': `${result.startup}ms${
@@ -134,6 +134,6 @@ if (outputMd) {
       'Root HMR time': `${result.rootHmr}ms`,
       'Leaf HMR time': `${result.leafHmr}ms`
     }
-  ])
+  ]))
   console.table(out)
 }
