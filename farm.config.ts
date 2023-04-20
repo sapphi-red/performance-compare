@@ -8,10 +8,12 @@ export default defineFarmConfig({
     resolve: {
       symlinks: true,
       mainFields: ['module', 'main', 'customMain'],
+      extensions: ['tsx', 'jsx', 'ts', 'js', 'json']
     },
     output: {
       path: './build',
     },
+    sourcemap: true,
   },
   server: {
     hmr: true,

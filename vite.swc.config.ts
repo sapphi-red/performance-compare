@@ -9,5 +9,11 @@ export default defineConfig({
     port: 5174,
     strictPort: true,
   },
+  resolve: {
+    extensions: ['.tsx', '.jsx', '.ts', '.js', '.json']
+  },
+  css: {
+    devSourcemap: true,
+  },
   cacheDir: 'node_modules/.vite-swc'
 });

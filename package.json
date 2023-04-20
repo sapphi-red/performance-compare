@@ -51,6 +51,10 @@
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"
   ],
+  "// parcel configs": {
+    "// note with resolve.extensions": "parcel doesn't provide a way to specify it",
+    "// note with sourcemaps": "parcel includes sourcesContent field."
+  },
   "alias": {
     "process": false
   }

@@ -27,6 +27,7 @@ module.exports = {
 		poll:0,
 		aggregateTimeout:0
 	},
+	devtool: 'nosources-cheap-source-map',
 	stats: {
 		timings:true,
 		all:false

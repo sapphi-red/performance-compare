@@ -29,7 +29,7 @@ const generateSwcOptions = (syntax) => ({
 module.exports = {
   entry: './src/index.tsx',
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.ts', '.tsx']
+    extensions: ['.tsx', '.jsx', '.ts', '.js', '.json']
   },
   module: {
     rules: [
@@ -62,6 +62,7 @@ module.exports = {
     port: 8082,
     hot: true
   },
+  devtool: 'eval-nosources-cheap-module-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.webpack.html'
