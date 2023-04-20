@@ -28,7 +28,7 @@ specifiers:
   style-loader: ^3.3.2
   swc-loader: ^0.2.3
   tree-kill: ^1.2.2
-  vite: ^4.3.0-beta.7
+  vite: ^4.3.0
   webpack: ^5.79.0
   webpack-cli: ^5.0.1
   webpack-dev-server: ^4.13.3
@@ -53,8 +53,8 @@ devDependencies:
   '@swc/core': 1.3.51
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
-  '@vitejs/plugin-react': 4.0.0-beta.1_vite@4.3.0-beta.7
-  '@vitejs/plugin-react-swc': 3.3.0_vite@4.3.0-beta.7
+  '@vitejs/plugin-react': 4.0.0-beta.1_vite@4.3.0
+  '@vitejs/plugin-react-swc': 3.3.0_vite@4.3.0
   babel-loader: 9.1.2_c3tfwv7p35clwcmkb5fnkshzei
   css-loader: 6.7.3_webpack@5.79.0
   html-webpack-plugin: 5.5.1_webpack@5.79.0
@@ -63,7 +63,7 @@ devDependencies:
   react-refresh: 0.14.0
   style-loader: 3.3.2_webpack@5.79.0
   swc-loader: 0.2.3_rylfvliebzocznlkpdbe6blkwe
-  vite: 4.3.0-beta.7
+  vite: 4.3.0
   webpack: 5.79.0_qnuuctrdqr4xpypalhnecdggui
   webpack-cli: 5.0.1_p36zd373urxldnwcoqg4c3uxta
   webpack-dev-server: 4.13.3_7fr2ry7hpnrkcoqpnojp64xaom
@@ -3335,18 +3335,18 @@ packages:
       '@types/node': 18.14.6
     dev: true
 
-  /@vitejs/plugin-react-swc/3.3.0_vite@4.3.0-beta.7:
+  /@vitejs/plugin-react-swc/3.3.0_vite@4.3.0:
     resolution: {integrity: sha512-Ycg+n2eyCOTpn/wRy+evVo859+hw7qCj9iaX5CMny6x1fx1Uoq0xBG+a98lFtwLNGfGEnpI0F26YigRuxCRkwg==}
     peerDependencies:
       vite: ^4
     dependencies:
       '@swc/core': 1.3.51
-      vite: 4.3.0-beta.7
+      vite: 4.3.0
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
 
-  /@vitejs/plugin-react/4.0.0-beta.1_vite@4.3.0-beta.7:
+  /@vitejs/plugin-react/4.0.0-beta.1_vite@4.3.0:
     resolution: {integrity: sha512-gEZYZ2iv8cyx9QRmEijCXrd/9OE+icYcZD5d1ThuqmePtIj2R6wMsxQXcf2CAJWIh4SLy1JfDVt2v+8E2loKmg==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -3357,7 +3357,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.21.4
       magic-string: 0.30.0
       react-refresh: 0.14.0
-      vite: 4.3.0-beta.7
+      vite: 4.3.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7057,8 +7057,8 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /vite/4.3.0-beta.7:
-    resolution: {integrity: sha512-3+kETt9zQya+WMfyOj+gy//euaX8HXuW/ZjQJwk1c1UBT2eeJxa3erKSC6TF7V0uye1o/oECEG2niSnDhNNmZQ==}
+  /vite/4.3.0:
+    resolution: {integrity: sha512-JTGFgDh3dVxeGBpuQX04Up+JZmuG6wu9414Ei36vQzaEruY/M4K0AgwtuB2b4HaBgB7R8l+LHxjB0jcgz4d2qQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
