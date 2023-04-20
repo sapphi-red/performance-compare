@@ -2,7 +2,7 @@
 Benchmarks for Farm, Webpack, Vite, Rspack and Turbopack.
 > Using Turbopack's bench cases (1000 React components), see https://turbo.build/pack/docs/benchmarks
 
-Results: https://gist.github.com/sapphi-red/db27f9c18ed31894e409224051119e1b
+Results: https://gist.github.com/sapphi-red/25be97327ee64a3c1dce793444afdf6e
 
 Run benchmarks:
 ```bash
