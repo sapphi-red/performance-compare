@@ -39,6 +39,8 @@
   },
   "scripts": {
     "benchmark": "node benchmark.mjs",
+    "benchmark:dev": "node benchmark.mjs -t=dev",
+    "benchmark:build": "node benchmark.mjs -t=build",
     "start:farm": "farm start",
     "start:vite": "vite",
     "start:vite-swc": "vite -c vite.swc.config.ts",
@@ -46,7 +48,15 @@
     "start:webpack-swc": "webpack serve --config ./webpack.swc.config.js --mode development",
     "start:rspack": "rspack serve",
     "start:turbopack": "next dev --turbo",
-    "start:parcel": "parcel index.html --dist-dir dist-parcel"
+    "start:parcel": "parcel index.html --dist-dir dist-parcel",
+    "build:rspack": "rspack build",
+    "build:vite": "vite build",
+    "build:vite-swc": "vite build -c vite.swc.config.ts",
+    "build:webpack": "webpack build --mode production",
+    "build:webpack-swc": "webpack build --config ./webpack.swc.config.js --mode production",
+    "build:parcel": "NODE_ENV=production parcel build index.html --no-cache",
+    "build:turbo": "echo 'skipped'",
+    "build:farm": "echo 'skipped'",
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"
