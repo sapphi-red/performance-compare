@@ -24,7 +24,7 @@ if (!fs.existsSync(serveDir)) {
   fs.mkdirSync(serveDir)
 }
 
-fs.cpSync(path.resolve(dirname, "../public/index.html"), path.resolve(serveDir, "index.html"));
+fs.cpSync(path.resolve(dirname, "../esbuild-public/index.html"), path.resolve(serveDir, "index.html"));
 
 if (watch) {
   await context.watch();

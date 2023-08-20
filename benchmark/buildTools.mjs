@@ -74,7 +74,7 @@ export const buildTools = [
     "Rspack",
     8080,
     "start:rspack",
-    /Time: (.+)ms/,
+    /compiled in (.+)ms/,
     () => {},
     "build:rspack"
   ),
@@ -100,7 +100,7 @@ export const buildTools = [
     "Turbopack",
     3000,
     "start:turbopack",
-    /startup (.+)ms/,
+    /started server on/,
     () => rm(path.join(_dirname, '../.next'), { force: true, recursive: true, maxRetries: 5 }),
     ""
   ),

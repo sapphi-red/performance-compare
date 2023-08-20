@@ -1,6 +1,6 @@
-import { defineFarmConfig } from '@farmfe/core/dist/config';
+import type { UserConfig } from '@farmfe/core'
 
-export default defineFarmConfig({
+const config: UserConfig = {
   compilation: {
     input: {
       index: './index.html',
@@ -19,4 +19,5 @@ export default defineFarmConfig({
     hmr: true,
   },
   plugins: ['@farmfe/plugin-react']
-});
+};
+export default config
