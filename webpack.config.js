@@ -1,9 +1,15 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const path = require('path');
 
 // webpack.config.js
-module.exports = {
+module.exports = (env, argv) => ({
   entry: './src/index.tsx',
+  output: {
+    path: path.resolve(__dirname, './dist-webpack')
+  },
   resolve: {
     extensions: ['.tsx', '.jsx', '.ts', '.js', '.json']
   },
@@ -14,8 +20,12 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
-            plugins: [require('react-refresh/babel')]
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: "automatic" }],
+              '@babel/preset-typescript'
+            ],
+            plugins: argv.mode !== 'production' ? [require('react-refresh/babel')] : []
           }
         },
         exclude: /node_modules/
@@ -25,14 +35,17 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-            plugins: [require('react-refresh/babel')]
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: "automatic" }]
+            ],
+            plugins: argv.mode !== 'production' ? [require('react-refresh/babel')] : []
           }
         }
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
         test: /\.svg$/,
@@ -44,13 +57,23 @@ module.exports = {
     port: 8081,
     hot: true
   },
-  devtool: 'eval-nosources-cheap-module-source-map',
+  devtool:
+    argv.mode === 'production'
+      ? false
+      : 'eval-nosources-cheap-module-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.webpack.html'
     }),
-    new ReactRefreshWebpackPlugin()
+    argv.mode !== 'production' && new ReactRefreshWebpackPlugin(),
+    new MiniCssExtractPlugin()
   ],
+  optimization: {
+    minimizer: [
+      '...',
+      new CssMinimizerPlugin(),
+    ]
+  },
 
   experiments: {
     futureDefaults: true,
@@ -59,4 +82,4 @@ module.exports = {
   node: {
     global: false,
   },
-}
+})

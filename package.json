@@ -26,13 +26,16 @@
     "babel-loader": "^9.1.3",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.1",
     "esbuild": "^0.19.2",
     "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
     "next": "^13.4.19",
     "parcel": "^2.9.3",
     "react-refresh": "^0.14.0",
     "style-loader": "^3.3.3",
     "swc-loader": "^0.2.3",
+    "terser-webpack-plugin": "^5.3.9",
     "vite": "^4.4.9",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
@@ -56,10 +59,10 @@
     "build:vite-swc": "vite build -c vite.swc.config.ts",
     "build:webpack": "webpack build --mode production",
     "build:webpack-swc": "webpack build --config ./webpack.swc.config.js --mode production",
-    "build:parcel": "cross-env NODE_ENV=production parcel build index.html --no-cache",
+    "build:parcel": "cross-env NODE_ENV=production parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache",
     "build:turbo": "echo 'skipped'",
-    "build:farm": "farm build",
-    "build:esbuild": "esbuild src/index.tsx --bundle --outfile=dist/out.js"
+    "build:farm": "cross-env IS_BUILD=1 farm build",
+    "build:esbuild": "esbuild src/index.tsx --bundle --minify --target=chrome87,firefox78,safari14,edge88 --outdir=dist-esbuild"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"

@@ -4,4 +4,8 @@ build
 .parcel-cache
 dist
 dist-parcel
+dist-esbuild
+dist-webpack
+dist-webpack-swc
+dist-rspack
 esbuild-serve

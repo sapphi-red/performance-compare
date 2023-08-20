@@ -1,5 +1,7 @@
 import type { UserConfig } from '@farmfe/core'
 
+const isBuild = process.env.IS_BUILD === '1'
+
 const config: UserConfig = {
   compilation: {
     input: {
@@ -13,7 +15,7 @@ const config: UserConfig = {
     output: {
       path: './build',
     },
-    sourcemap: true,
+    sourcemap: !isBuild,
     presetEnv: {
       options: {
         targets: 'Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88'

@@ -1,7 +1,11 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const path = require('path');
 
-const generateSwcOptions = (syntax) => ({
+const generateSwcOptions = (syntax, isProd) => ({
   jsc: {
     parser: {
       syntax,
@@ -19,15 +23,19 @@ const generateSwcOptions = (syntax) => ({
     transform: {
       react: {
         runtime: "automatic",
-        refresh: true,
+        development: !isProd,
+        refresh: !isProd,
       },
     },
   },
 })
 
 // webpack.config.js
-module.exports = {
+module.exports = (env, argv) => ({
   entry: './src/index.tsx',
+  output: {
+    path: path.resolve(__dirname, './dist-webpack-swc')
+  },
   resolve: {
     extensions: ['.tsx', '.jsx', '.ts', '.js', '.json']
   },
@@ -37,7 +45,7 @@ module.exports = {
         test: /\.tsx?$/,
         use: {
           loader: 'swc-loader',
-          options: generateSwcOptions('typescript'),
+          options: generateSwcOptions('typescript', argv.mode === 'production'),
         },
         exclude: /node_modules/
       },
@@ -45,12 +53,12 @@ module.exports = {
         test: /\.jsx?$/,
         use: {
           loader: 'swc-loader',
-          options: generateSwcOptions('ecmascript'),
+          options: generateSwcOptions('ecmascript', argv.mode === 'production'),
         },
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
       {
         test: /\.svg$/,
@@ -62,13 +70,24 @@ module.exports = {
     port: 8082,
     hot: true
   },
-  devtool: 'eval-nosources-cheap-module-source-map',
+  devtool:
+    argv.mode === 'production'
+      ? false
+      : 'eval-nosources-cheap-module-source-map',
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.webpack.html'
     }),
-    new ReactRefreshWebpackPlugin()
+    argv.mode !== 'production' && new ReactRefreshWebpackPlugin(),
+    new MiniCssExtractPlugin()
   ],
+  optimization: {
+    minimize: argv.mode === 'production',
+    minimizer: [
+      new TerserPlugin({ minify: TerserPlugin.swcMinify }),
+      new CssMinimizerPlugin(),
+    ],
+  },
 
   experiments: {
     futureDefaults: true,
@@ -77,4 +96,4 @@ module.exports = {
   node: {
     global: false,
   },
-}
+})

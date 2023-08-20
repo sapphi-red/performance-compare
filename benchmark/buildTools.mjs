@@ -141,7 +141,7 @@ export const buildTools = [
     9000,
     "start:farm",
     /Ready on (?:.+) in (.+)ms/,
-    () => {},
+    () => rm(path.join(_dirname, '../node_modules/.farm'), { force: true, recursive: true, maxRetries: 5 }),
     "build:farm"
   ),
   new BuildTool(
