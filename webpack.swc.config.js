@@ -69,4 +69,12 @@ module.exports = {
     }),
     new ReactRefreshWebpackPlugin()
   ],
+
+  experiments: {
+    futureDefaults: true,
+    css: false,
+  },
+  node: {
+    global: false,
+  },
 }
