@@ -26,6 +26,7 @@
     "@vitejs/plugin-react-swc": "^3.3.0",
     "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
+    "esbuild": "^0.17.19",
     "html-webpack-plugin": "^5.5.1",
     "next": "^13.3.0",
     "parcel": "^2.8.3",
@@ -47,6 +48,7 @@
     "start:webpack": "webpack serve --mode development",
     "start:webpack-swc": "webpack serve --config ./webpack.swc.config.js --mode development",
     "start:rspack": "rspack serve",
+    "start:esbuild": "node ./benchmark/esbuild.mjs --watch",
     "start:turbopack": "next dev --turbo",
     "start:parcel": "parcel index.html --dist-dir dist-parcel",
     "build:rspack": "rspack build",
@@ -57,6 +59,7 @@
     "build:parcel": "NODE_ENV=production parcel build index.html --no-cache",
     "build:turbo": "echo 'skipped'",
     "build:farm": "echo 'skipped'",
+    "build:esbuild": "esbuild src/index.tsx --bundle --outfile=dist/out.js"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"

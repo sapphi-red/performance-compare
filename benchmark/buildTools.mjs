@@ -1,4 +1,5 @@
-import { rm } from "fs/promises";
+import { template } from "./esbuild.mjs";
+import { mkdir, rm, writeFile } from "fs/promises";
 import { spawn } from "child_process";
 import kill from "tree-kill";
 import path from "path";
@@ -76,6 +77,24 @@ export const buildTools = [
     /Time: (.+)ms/,
     () => {},
     "build:rspack"
+  ),
+  new BuildTool(
+    "esbuild",
+    1235,
+    "start:esbuild",
+    /esbuild serve cost (.+)ms/,
+    async () => {
+      const serveDir = path.join(_dirname, "../esbuild-serve");
+      try {
+        await mkdir(serveDir)
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          throw err
+        }
+      }
+      await writeFile(path.join(_dirname, "../esbuild-serve/index.html"), template)
+    },
+    "build:esbuild"
   ),
   new BuildTool(
     "Turbopack",

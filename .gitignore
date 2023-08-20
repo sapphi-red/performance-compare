@@ -4,3 +4,4 @@ build
 .parcel-cache
 dist
 dist-parcel
+esbuild-serve
