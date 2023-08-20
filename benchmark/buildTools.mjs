@@ -142,7 +142,7 @@ export const buildTools = [
     "start:farm",
     /Ready on (?:.+) in (.+)ms/,
     () => {},
-    ""
+    "build:farm"
   ),
   new BuildTool(
     "Parcel",

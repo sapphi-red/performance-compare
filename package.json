@@ -58,7 +58,7 @@
     "build:webpack-swc": "webpack build --config ./webpack.swc.config.js --mode production",
     "build:parcel": "cross-env NODE_ENV=production parcel build index.html --no-cache",
     "build:turbo": "echo 'skipped'",
-    "build:farm": "echo 'skipped'",
+    "build:farm": "farm build",
     "build:esbuild": "esbuild src/index.tsx --bundle --outfile=dist/out.js"
   },
   "browserslist": [
