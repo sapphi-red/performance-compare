@@ -7,8 +7,8 @@ module.exports = {
 		main: "./src/index.tsx"
 	},
 	builtins: {
-		noEmitAssets:true,
-		devFriendlySplitChunks:true,
+		noEmitAssets: true,
+		devFriendlySplitChunks: true,
 		html: [
 			{
 				template: "./index.webpack.html"
@@ -24,12 +24,12 @@ module.exports = {
 		]
 	},
 	watchOptions: {
-		poll:0,
-		aggregateTimeout:0
+		poll: 0,
+		aggregateTimeout: 0
 	},
 	devtool: 'nosources-cheap-source-map',
 	stats: {
-		timings:true,
-		all:false
+		timings: true,
+		all: false
 	}
 };
