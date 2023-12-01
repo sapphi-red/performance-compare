@@ -23,7 +23,8 @@ const config: UserConfig = {
     }
   },
   server: {
-    hmr: true,
+    strictPort: true,
+    hmr: true
   },
   plugins: ['@farmfe/plugin-react'],
 };
