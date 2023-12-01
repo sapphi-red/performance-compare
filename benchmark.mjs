@@ -40,54 +40,56 @@ if (runDev) {
     }
 
     for (let i = 0; i < count; i++) {
-      console.log(`Running: ${buildTool.name} (${i+1})`);
+      try {
+        console.log(`Running: ${buildTool.name} (${i+1})`);
 
-      if (!hotRun) {
-        await buildTool.clean?.()
+        if (!hotRun) {
+          await buildTool.clean?.()
+        }
+
+        const page = await (await browser.newContext()).newPage();
+        await new Promise((resolve) => setTimeout(resolve, 300)); // give some rest
+
+        const loadPromise = page.waitForEvent('load');
+        const pageLoadStart = Date.now();
+        const serverStartTime = await buildTool.startServer();
+        page.goto(`http://localhost:${buildTool.port}`);
+        await loadPromise;
+        totalResult.startup ??= 0;
+        totalResult.startup += (Date.now() - pageLoadStart);
+        if (serverStartTime !== null) {
+          totalResult.serverStart ??= 0;
+          totalResult.serverStart += serverStartTime;
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const rootConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('root hmr') });
+        appendFileSync(rootFilePath, `
+          console.log('root hmr');
+        `)
+        const hmrRootStart = Date.now();
+        await rootConsolePromise;
+        totalResult.rootHmr ??= 0;
+        totalResult.rootHmr += (Date.now() - hmrRootStart);
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const leafConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
+        appendFileSync(leafFilePath, `
+          console.log('leaf hmr');
+        `)
+        const hmrLeafStart = Date.now();
+        await leafConsolePromise;
+        totalResult.leafHmr ??= 0;
+        totalResult.leafHmr += (Date.now() - hmrLeafStart);
+
+        buildTool.stop();
+        await page.close();
+      } finally {
+        writeFileSync(rootFilePath, originalRootFileContent);
+        writeFileSync(leafFilePath, originalLeafFileContent);
       }
-
-      const page = await (await browser.newContext()).newPage();
-      await new Promise((resolve) => setTimeout(resolve, 300)); // give some rest
-
-      const loadPromise = page.waitForEvent('load');
-      const pageLoadStart = Date.now();
-      const serverStartTime = await buildTool.startServer();
-      page.goto(`http://localhost:${buildTool.port}`);
-      await loadPromise;
-      totalResult.startup ??= 0;
-      totalResult.startup += (Date.now() - pageLoadStart);
-      if (serverStartTime !== null) {
-        totalResult.serverStart ??= 0;
-        totalResult.serverStart += serverStartTime;
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const rootConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('root hmr') });
-      appendFileSync(rootFilePath, `
-        console.log('root hmr');
-      `)
-      const hmrRootStart = Date.now();
-      await rootConsolePromise;
-      totalResult.rootHmr ??= 0;
-      totalResult.rootHmr += (Date.now() - hmrRootStart);
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const leafConsolePromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
-      appendFileSync(leafFilePath, `
-        console.log('leaf hmr');
-      `)
-      const hmrLeafStart = Date.now();
-      await leafConsolePromise;
-      totalResult.leafHmr ??= 0;
-      totalResult.leafHmr += (Date.now() - hmrLeafStart);
-
-      buildTool.stop();
-      await page.close();
-
-      writeFileSync(rootFilePath, originalRootFileContent);
-      writeFileSync(leafFilePath, originalLeafFileContent);
     }
 
     const result = Object.fromEntries(Object.entries(totalResult).map(([k, v]) => [k, v ? (v / count).toFixed(1) : v]))
