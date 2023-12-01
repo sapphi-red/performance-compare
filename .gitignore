@@ -9,3 +9,4 @@ dist-webpack
 dist-webpack-swc
 dist-rspack
 esbuild-serve
+next-env.d.ts
