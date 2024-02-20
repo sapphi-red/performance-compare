@@ -57,15 +57,15 @@
     "start:esbuild": "node ./benchmark/esbuild.mjs --watch",
     "start:turbopack": "next dev --turbo -p 3000",
     "start:parcel": "parcel index.html --dist-dir dist-parcel",
-    "build:rspack": "rspack build",
+    "build:farm": "cross-env IS_BUILD=1 farm build",
     "build:vite": "vite build",
     "build:vite-swc": "vite build -c vite.swc.config.mts",
     "build:webpack": "webpack build --mode production",
     "build:webpack-swc": "webpack build --config ./webpack.swc.config.js --mode production",
-    "build:parcel": "cross-env NODE_ENV=production parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache",
-    "build:turbo": "echo 'skipped'",
-    "build:farm": "cross-env IS_BUILD=1 farm build",
-    "build:esbuild": "esbuild src/index.tsx --bundle --minify --target=chrome87,firefox78,safari14,edge88 --outdir=dist-esbuild"
+    "build:rspack": "rspack build",
+    "build:esbuild": "esbuild src/index.tsx --bundle --minify --target=chrome87,firefox78,safari14,edge88 --outdir=dist-esbuild",
+    "build:turbopack": "echo 'skipped'",
+    "build:parcel": "cross-env NODE_ENV=production parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"
