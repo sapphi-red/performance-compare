@@ -41,6 +41,9 @@ module.exports = function (env, argv) {
 			path: path.resolve(__dirname, './dist-rspack')
 		},
 		target: 'browserslist',
+		resolve: {
+			extensions: ['.tsx', '.jsx', '.ts', '.js', '.json']
+		},
 		module: {
 			rules: [
 				{
