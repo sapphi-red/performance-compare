@@ -59,7 +59,7 @@
     "start:parcel": "parcel index.html --dist-dir dist-parcel",
     "build:rspack": "rspack build",
     "build:vite": "vite build",
-    "build:vite-swc": "vite build -c vite.swc.config.ts",
+    "build:vite-swc": "vite build -c vite.swc.config.mts",
     "build:webpack": "webpack build --mode production",
     "build:webpack-swc": "webpack build --config ./webpack.swc.config.js --mode production",
     "build:parcel": "cross-env NODE_ENV=production parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache",
