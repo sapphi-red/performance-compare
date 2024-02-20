@@ -84,6 +84,15 @@ if (runDev) {
         totalResult.leafHmr ??= 0;
         totalResult.leafHmr += (Date.now() - hmrLeafStart);
 
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const leafConsoleAfterReloadPromise = page.waitForEvent('console', { predicate: e => e.text().includes('leaf hmr') });
+        const reloadStart = Date.now();
+        page.reload({ waitUntil: 'commit' });
+        await leafConsoleAfterReloadPromise;
+        totalResult.reload ??= 0;
+        totalResult.reload += (Date.now() - reloadStart);
+
         buildTool.stop();
         await page.close();
       } finally {
@@ -129,7 +138,7 @@ console.log('Results')
 if (outputMd) {
   const rows = [
     'name',
-    ...(runDev ? ['startup', 'Root HMR', 'Leaf HMR'] : []),
+    ...(runDev ? ['startup', 'Root HMR', 'Leaf HMR', 'Reload'] : []),
     ...(runBuild ? ['Build time'] : [])
   ]
   let out = `| ${rows.join(' | ')} |\n`
@@ -147,7 +156,8 @@ if (outputMd) {
                     : ''
                 }`,
                 `${result.rootHmr}ms`,
-                `${result.leafHmr}ms`
+                `${result.leafHmr}ms`,
+                `${result.reload}ms`
               ]
             : []),
           ...(runBuild
@@ -171,6 +181,7 @@ if (outputMd) {
             }`,
             'Root HMR time': `${result.rootHmr}ms`,
             'Leaf HMR time': `${result.leafHmr}ms`,
+            'Reload time': `${result.reload}ms`,
           }
         : {}),
       ...(runBuild
