@@ -5,6 +5,8 @@ build
 dist
 dist-parcel
 dist-esbuild
+dist-vite
+dist-vite-swc
 dist-webpack
 dist-webpack-swc
 dist-rspack
