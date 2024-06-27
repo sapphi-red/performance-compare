@@ -8,12 +8,10 @@ const config: UserConfig = {
       index: './index.html',
     },
     resolve: {
-      symlinks: true,
-      mainFields: ['module', 'main', 'customMain'],
       extensions: ['tsx', 'jsx', 'ts', 'js', 'json']
     },
     output: {
-      path: './build',
+      path: './dist-farm',
     },
     sourcemap: !isBuild,
     presetEnv: {

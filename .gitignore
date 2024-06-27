@@ -1,8 +1,8 @@
 node_modules
-build
 .next
 .parcel-cache
 dist
+dist-farm
 dist-parcel
 dist-esbuild
 dist-vite
