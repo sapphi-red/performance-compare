@@ -121,12 +121,14 @@ if (runBuild) {
         const productionEnd = Date.now()
         sum += productionEnd - productionStart
       }
+      const jsSize = await buildTool.collectJsFileSize()
 
       const matchedResult = results.find((item) => item.name === buildTool.name)
       if (matchedResult) {
         matchedResult.result.production = (sum / count).toFixed(1);
+        matchedResult.result.jsSize = jsSize;
       } else {
-        results.push({ name: buildTool.name, result: { production: (sum / count).toFixed(1) } })
+        results.push({ name: buildTool.name, result: { production: (sum / count).toFixed(1), jsSize } })
       }
     }
   }
@@ -135,11 +137,18 @@ if (runBuild) {
 console.log('-----')
 console.log('Results')
 
+const byteFormatter = Intl.NumberFormat('en', {
+  notation: 'compact',
+  style: 'unit',
+  unit: 'byte',
+  unitDisplay: 'narrow',
+})
+
 if (outputMd) {
   const rows = [
     'name',
     ...(runDev ? ['startup', 'Root HMR', 'Leaf HMR', 'Reload'] : []),
-    ...(runBuild ? ['Build time'] : [])
+    ...(runBuild ? ['Build time', 'JS size'] : [])
   ]
   let out = `| ${rows.join(' | ')} |\n`
   out += `| ${rows.map((v, i) => i === 0 ? ' --- ' : ' ---: ').join('|')} |\n`
@@ -161,7 +170,10 @@ if (outputMd) {
               ]
             : []),
           ...(runBuild
-            ? [`${result.production ? `${result.production}ms` : '---'}`]
+            ? [
+                result.production ? `${result.production}ms` : '---',
+                result.jsSize ? byteFormatter.format(result.jsSize) : '---'
+              ]
             : []
           )
         ].join(' | ')} |`
@@ -186,7 +198,8 @@ if (outputMd) {
         : {}),
       ...(runBuild
         ? {
-          'Build time': `${result.production ? `${result.production}ms` : '---'}`
+          'Build time': result.production ? `${result.production}ms` : '---',
+          'JS size': result.jsSize ? byteFormatter.format(result.jsSize) : '---'
         }
         : {}
       )

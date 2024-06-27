@@ -4,17 +4,19 @@ import { spawn } from "child_process";
 import kill from "tree-kill";
 import path from "path";
 import url from "url";
+import fg from "fast-glob";
 
 const _dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 class BuildTool {
-  constructor(name, port, script, startedRegex, clean, buildScript) {
+  constructor(name, port, script, startedRegex, clean, buildScript, distDir) {
     this.name = name;
     this.port = port;
     this.script = script;
     this.startedRegex = startedRegex;
     this.clean = clean
     this.buildScript = buildScript
+    this.distDir = distDir
   }
 
   async startServer() {
@@ -55,6 +57,12 @@ class BuildTool {
     }
   }
 
+  async collectJsFileSize() {
+    const jsFiles = await fg("**/*.js", { cwd: this.distDir, absolute: true, stats: true });
+    const sizes = jsFiles.map(file => file.stats.size)
+    return sizes.reduce((a, b) => a + b, 0);
+  }
+
   async startProductionBuild() {
     const child = spawn(`npm`, ["run", this.buildScript], { stdio: 'pipe', shell: true, env: { ...process.env, NO_COLOR: '1' } });
     this.child = child;
@@ -82,7 +90,8 @@ export const buildTools = [
     "start:rspack",
     /compiled in (.+ms)/,
     () => {},
-    "build:rspack"
+    "build:rspack",
+    path.join(_dirname, "../dist-rspack")
   ),
   new BuildTool(
     "esbuild",
@@ -100,7 +109,8 @@ export const buildTools = [
       }
       await writeFile(path.join(_dirname, "../esbuild-serve/index.html"), template)
     },
-    "build:esbuild"
+    "build:esbuild",
+    path.join(_dirname, "../dist-esbuild")
   ),
   new BuildTool(
     "Turbopack",
@@ -108,6 +118,7 @@ export const buildTools = [
     "start:turbopack",
     /Ready in (.+m?s)/,
     () => rm(path.join(_dirname, '../.next'), { force: true, recursive: true, maxRetries: 5 }),
+    "",
     ""
   ),
   new BuildTool(
@@ -116,7 +127,8 @@ export const buildTools = [
     "start:webpack",
     /compiled successfully in (.+ms)/,
     () => {},
-    "build:webpack"
+    "build:webpack",
+    path.join(_dirname, "../dist-webpack")
   ),
   new BuildTool(
     "Webpack (swc)",
@@ -124,7 +136,8 @@ export const buildTools = [
     "start:webpack-swc",
     /compiled successfully in (.+ ms)/,
     () => {},
-    "build:webpack-swc"
+    "build:webpack-swc",
+    path.join(_dirname, "../dist-webpack-swc")
   ),
   new BuildTool(
     "Vite",
@@ -132,7 +145,8 @@ export const buildTools = [
     "start:vite",
     /ready in (.+ ms)/,
     () => rm(path.join(_dirname, '../node_modules/.vite'), { force: true, recursive: true, maxRetries: 5 }),
-    "build:vite"
+    "build:vite",
+    path.join(_dirname, "../dist-vite")
   ),
   new BuildTool(
     "Vite (swc)",
@@ -140,7 +154,8 @@ export const buildTools = [
     "start:vite-swc",
     /ready in (.+ ms)/,
     () => rm(path.join(_dirname, '../node_modules/.vite-swc'), { force: true, recursive: true, maxRetries: 5 }),
-    "build:vite-swc"
+    "build:vite-swc",
+    path.join(_dirname, "../dist-vite-swc")
   ),
   new BuildTool(
     "Farm",
@@ -148,7 +163,8 @@ export const buildTools = [
     "start:farm",
     /Ready in (.+ms)/,
     () => rm(path.join(_dirname, '../node_modules/.farm'), { force: true, recursive: true, maxRetries: 5 }),
-    "build:farm"
+    "build:farm",
+    path.join(_dirname, "../dist-farm")
   ),
   new BuildTool(
     "Parcel",
@@ -159,6 +175,7 @@ export const buildTools = [
       rm(path.join(_dirname, '../.parcel-cache'), { force: true, recursive: true, maxRetries: 5 }),
       rm(path.join(_dirname, '../dist-parcel'), { force: true, recursive: true, maxRetries: 5 })
     ]),
-    "build:parcel"
+    "build:parcel",
+    path.join(_dirname, "../dist-parcel")
   ),
 ]
