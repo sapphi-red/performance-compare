@@ -50,7 +50,7 @@ module.exports = function (env, argv) {
 					test: /\.tsx?$/,
 					use: {
 						loader: 'builtin:swc-loader',
-						options: generateSwcOptions('typescript', argv.mode === 'production'),
+						options: generateSwcOptions('typescript', isBuild),
 					},
 					exclude: /node_modules/
 				},
@@ -58,7 +58,7 @@ module.exports = function (env, argv) {
 					test: /\.jsx?$/,
 					use: {
 						loader: 'builtin:swc-loader',
-						options: generateSwcOptions('ecmascript', argv.mode === 'production'),
+						options: generateSwcOptions('ecmascript', isBuild),
 					}
 				},
 				{
@@ -69,7 +69,7 @@ module.exports = function (env, argv) {
 		},
 		plugins: [
 			new rspack.HtmlRspackPlugin({ template: './index.webpack.html' }),
-			argv.mode !== 'production' && new ReactRefreshPlugin()
+			!isBuild && new ReactRefreshPlugin()
 		],
 		watchOptions: {
 			poll: 0,
