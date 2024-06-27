@@ -10,5 +10,6 @@ dist-vite-swc
 dist-webpack
 dist-webpack-swc
 dist-rspack
+dist-rolldown
 esbuild-serve
 next-env.d.ts

@@ -178,4 +178,12 @@ export const buildTools = [
     "build:parcel",
     path.join(_dirname, "../dist-parcel")
   ),
+  new BuildTool(
+    "Rolldown",
+    7173,
+    "",
+    /./,
+    () => {},
+    "build:rolldown"
+  ),
 ]
