@@ -26,7 +26,6 @@
     "@vitejs/plugin-react": "^4.3.1",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "babel-loader": "^9.1.3",
-    "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^6.0.0",
     "esbuild": "^0.20.2",
@@ -57,7 +56,7 @@
     "start:esbuild": "node ./benchmark/esbuild.mjs --watch",
     "start:turbopack": "next dev --turbo -p 3000",
     "start:parcel": "parcel index.html --dist-dir dist-parcel",
-    "build:farm": "cross-env IS_BUILD=1 farm build",
+    "build:farm": "farm build",
     "build:vite": "vite build",
     "build:vite-swc": "vite build -c vite.swc.config.mts",
     "build:webpack": "webpack build --mode production",
@@ -65,7 +64,7 @@
     "build:rspack": "rspack build",
     "build:esbuild": "esbuild src/index.tsx --bundle --minify --target=chrome87,firefox78,safari14,edge88 --outdir=dist-esbuild",
     "build:turbopack": "echo 'skipped'",
-    "build:parcel": "cross-env NODE_ENV=production parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache"
+    "build:parcel": "parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"

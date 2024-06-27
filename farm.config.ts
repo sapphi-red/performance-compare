@@ -1,6 +1,6 @@
 import type { UserConfig } from '@farmfe/core'
 
-const isBuild = process.env.IS_BUILD === '1'
+const isBuild = process.env.NODE_ENV === "production"
 
 const config: UserConfig = {
   compilation: {
