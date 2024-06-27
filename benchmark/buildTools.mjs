@@ -184,6 +184,16 @@ export const buildTools = [
     "",
     /./,
     () => {},
-    "build:rolldown"
+    "build:rolldown",
+    path.join(_dirname, "../dist-rolldown")
+  ),
+  new BuildTool(
+    "Rolldown w/ minify",
+    7174,
+    "",
+    /./,
+    () => {},
+    "build:rolldown-minify",
+    path.join(_dirname, "../dist-rolldown-minify")
   ),
 ]

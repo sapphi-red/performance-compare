@@ -68,7 +68,8 @@
     "build:esbuild": "esbuild src/index.tsx --bundle --minify --target=chrome87,firefox78,safari14,edge88 --outdir=dist-esbuild",
     "build:turbopack": "echo 'skipped'",
     "build:parcel": "parcel build index.html --dist-dir dist-parcel --no-source-maps --no-cache",
-    "build:rolldown": "rolldown -c ./rolldown.config.mjs"
+    "build:rolldown": "rolldown -c ./rolldown.config.mjs",
+    "build:rolldown-minify": "rolldown -c ./rolldown.minify.config.mjs"
   },
   "browserslist": [
     "Chrome >= 87, Firefox >= 78, Safari >= 14, Edge >= 88"

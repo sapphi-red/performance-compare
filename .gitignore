@@ -11,5 +11,6 @@ dist-webpack
 dist-webpack-swc
 dist-rspack
 dist-rolldown
+dist-rolldown-minify
 esbuild-serve
 next-env.d.ts
